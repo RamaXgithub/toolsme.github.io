@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TikTok Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #120022;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+    h1 {
+      margin-bottom: 20px;
+      margin-top: 60px;
+      color: #cda0ff;
+    }
+    input[type=text] {
+      width: 320px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      font-size: 16px;
+      background: #2c2c54;
+      color: #eee;
+    }
+    input[type=text]::placeholder {
+      color: #bbb;
+    }
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #8e44ad;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+      min-width: 100px;
+    }
+    button:hover {
+      background: #732d91;
+    }
+    #result {
+      max-width: 360px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    video, audio {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(142, 68, 173, 0.8);
+      margin-bottom: 10px;
+      background: black;
+    }
+    p.error {
+      color: #ff5555;
+      font-weight: bold;
+    }
+    .info {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: none;
+      border: none;
+      color: #cda0ff;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+    }
+    .back-button:hover {
+      color: #ffffff;
+    }
+    .back-button span {
+      font-size: 10px;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="window.history.back()">
+    <span>&larr;</span> kembali
+  </button>
+
+  <h1>TikTok Downloader</h1>
+  <input type="text" id="urlInput" placeholder="Masukkan link..." />
+  <div>
+    <button onclick="downloadVideo()">Download Video</button>
+    <button onclick="downloadAudio()">Download Audio</button>
+  </div>
+  <div id="result"></div>
+
+  <script>
+    let lastData = null;
+    let lastUrl = null;
+
+    async function fetchTikTokData(url) {
+      if (!url) throw new Error('URL tidak boleh kosong');
+      const apiUrl = 'https://api.ryzumi.vip/api/downloader/ttdl?url=' + encodeURIComponent(url);
+      const res = await fetch(apiUrl);
+      if (!res.ok) throw new Error('Gagal mengambil data dari API');
+      const json = await res.json();
+      if (!json.success || !json.data || !json.data.data) throw new Error('Video tidak ditemukan atau API error');
+      return json.data.data;
+    }
+
+    async function downloadVideo() {
+      const url = document.getElementById('urlInput').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+      if (!url) {
+        result.innerHTML = '<p class="error">Mohon masukkan URL TikTok terlebih dahulu!</p>';
+        return;
+      }
+      result.innerHTML = '<p>Memproses video, tunggu sebentar...</p>';
+      try {
+        const data = await fetchTikTokData(url);
+        lastData = data;
+        lastUrl = url;
+        result.innerHTML = `
+          <video controls src="${data.play}" poster="${data.cover}"></video>
+          <p class="info"><strong>Judul:</strong> ${data.title || '(tidak ada judul)'}</p>
+          <p class="info"><strong>Author:</strong> ${data.author.nickname} (@${data.author.unique_id})</p>
+          <a href="${data.play}" download="tiktok-video.mp4">
+            <button>Download Video</button>
+          </a>
+        `;
+      } catch (err) {
+        result.innerHTML = '<p class="error">Terjadi kesalahan: ' + err.message + '</p>';
+        console.error(err);
+      }
+    }
+
+    async function downloadAudio() {
+      const result = document.getElementById('result');
+      const url = document.getElementById('urlInput').value.trim();
+
+      if (!url) {
+        result.innerHTML = '<p class="error">Mohon masukkan URL TikTok terlebih dahulu!</p>';
+        return;
+      }
+
+      if (!lastData || lastUrl !== url) {
+        result.innerHTML = '<p>Memproses audio, tunggu sebentar...</p>';
+        try {
+          lastData = await fetchTikTokData(url);
+          lastUrl = url;
+        } catch (err) {
+          result.innerHTML = '<p class="error">Terjadi kesalahan: ' + err.message + '</p>';
+          console.error(err);
+          return;
+        }
+      }
+
+      let audioUrl = null;
+      let audioTitle = '(tidak diketahui)';
+
+      if (lastData.music && typeof lastData.music === 'string') {
+        audioUrl = lastData.music;
+      } else if (lastData.music_info && lastData.music_info.play) {
+        audioUrl = lastData.music_info.play;
+        audioTitle = lastData.music_info.title || audioTitle;
+      }
+
+      if (!audioUrl) {
+        result.innerHTML = '<p class="error">Audio tidak tersedia untuk video ini.</p>';
+        return;
+      }
+
+      result.innerHTML = `
+        <audio controls src="${audioUrl}"></audio>
+        <p class="info"><strong>Judul Audio:</strong> ${audioTitle}</p>
+      `;
+    }
+  </script>
+  </title> © This website is created by JJiSami </title>
+</body>
+</html>

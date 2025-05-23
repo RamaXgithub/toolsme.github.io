@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouTube Downloader</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #120022;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px;
+      min-height: 100vh;
+      margin: 0;
+      position: relative;
+    }
+    h1 {
+      margin-bottom: 20px;
+      margin-top: 60px;
+      color: #cda0ff;
+    }
+    input[type=text] {
+      width: 320px;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 10px;
+      font-size: 16px;
+      background: #2c2c54;
+      color: #eee;
+    }
+    input[type=text]::placeholder {
+      color: #bbb;
+    }
+    button {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #8e44ad;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+      min-width: 100px;
+    }
+    button:hover {
+      background: #732d91;
+    }
+    #result {
+      max-width: 360px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    video, audio {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(142, 68, 173, 0.8);
+      margin-bottom: 10px;
+      background: black;
+    }
+    p.error {
+      color: #ff5555;
+      font-weight: bold;
+    }
+    .info {
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: none;
+      border: none;
+      color: #cda0ff;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+    }
+    .back-button:hover {
+      color: #ffffff;
+    }
+    .back-button span {
+      font-size: 10px;
+      margin-right: 4px;
+    }
+  </style>
+</head>
+<body>
+  <button class="back-button" onclick="window.history.back()">
+    <span>&larr;</span> kembali
+  </button>
+  
+    <h1>YouTube Downloader</h1>
+    <input type="text" id="urlInput" placeholder="Masukkan URL YouTube" />
+    <div class="button-group">
+      <button id="btnMP3" onclick="downloadMP3()">Unduh MP3</button>
+      <button id="btnMP4" onclick="downloadMP4()">Unduh MP4</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    async function fetchData(api, url) {
+      const response = await fetch(`${api}?url=${encodeURIComponent(url)}`);
+      if (!response.ok) throw new Error('Gagal mengambil data dari API');
+      return await response.json();
+    }
+
+    async function downloadMP3() {
+      const url = document.getElementById('urlInput').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+      if (!url) {
+        result.innerHTML = '<p class="error">Masukkan URL YouTube terlebih dahulu.</p>';
+        return;
+      }
+      result.innerHTML = '<p>Memproses MP3...</p>';
+      try {
+        const data = await fetchData('https://api.ryzumi.vip/api/downloader/ytmp3', url);
+        result.innerHTML = `
+          <img src="${data.thumbnail}" alt="thumbnail" />
+          <p><strong>${data.title}</strong></p>
+          <p class="info">Oleh: <a href="${data.authorUrl}" target="_blank">${data.author}</a></p>
+          <audio controls src="${data.url}"></audio>
+          <a class="download-btn" href="${data.url}" download="${data.title}.mp3">Download MP3 (${data.quality})</a>
+        `;
+      } catch (e) {
+        result.innerHTML = '<p class="error">' + e.message + '</p>';
+      }
+    }
+
+    async function downloadMP4() {
+      const url = document.getElementById('urlInput').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = '';
+      if (!url) {
+        result.innerHTML = '<p class="error">Masukkan URL YouTube terlebih dahulu.</p>';
+        return;
+      }
+      result.innerHTML = '<p>Memproses MP4...</p>';
+      try {
+        const data = await fetchData('https://api.ryzumi.vip/api/downloader/ytmp4', url);
+        result.innerHTML = `
+          <img src="${data.thumbnail}" alt="thumbnail" />
+          <p><strong>${data.title}</strong></p>
+          <p class="info">Oleh: <a href="${data.authorUrl}" target="_blank">${data.author}</a></p>
+          <video controls src="${data.url}"></video>
+          <a class="download-btn" href="${data.url}" download="${data.title}.mp4">Download MP4 (${data.quality})</a>
+        `;
+      } catch (e) {
+        result.innerHTML = '<p class="error">' + e.message + '</p>';
+      }
+    }
+  </script>
+  </title> © This website is created by JJiSami </title>
+</body>
+</html>

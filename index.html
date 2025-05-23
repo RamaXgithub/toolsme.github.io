@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Landing Portofolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <div class="menu-btn" id="menuBtn">&#9776;</div>
+  <div class="logo-container">
+    <img src="https://i.ibb.co/Jfr8p23/IMG-20250522-151618-349.jpg" alt="Logo" />
+    <div class="logo-text">Ranpang JiSami</div>
+  </div>
+</header>
+
+<nav id="sidebar">
+  <ul>
+    <li><a href="index.html">Dashboard</a></li>
+    <li>
+      <a href="#" id="serviceToggle">
+        Service <span id="arrow" class="arrow">&#9662;</span>
+      </a>
+<ul class="submenu" id="serviceMenu">
+<li><strong>Downloader</strong></li>
+        <li><a href="tiktok.html">TikTok</a></li>
+        <li><a href="youtube.html">YouTube</a></li>
+        <li><a href="#">Spotify</a></li>
+<li><strong>Socket & Network</strong></li>
+        <li><a href="#">DDoS</a></li>
+        <li><a href="#">Bot WhatsApp</a></li>
+        <li><a href="#">Bot Telegram</a></li>
+        <li><a href="#">Spaming</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Other</a></li>
+  </ul>
+</nav>
+
+<main>
+    <div class="no-bg">
+      <div class="top-image"></div>
+    </div>
+  </div>
+
+  <div class="container reveal">
+    Hai client, selamat datang di landing package. Situs ini milik <strong>Ranpang (JiSami)</strong> yang bermaksud digunakan sebagai situs portofolio atau pengenalan diri lewat interaksi di situs ini.
+  </div>
+
+<div class="container reveal">
+  Hubungi saya jika ada keperluan di 2 platfrom media sosial ini.
+  <div class="btn-group">
+    <a href="https://t.me/jjisami" class="btn" target="_blank" style="padding:14px 28px; font-size:18px;">Telegram</a>
+    <a href="https://instagram.com/bramdwierlng_" class="btn" target="_blank" style="padding:14px 28px; font-size:18px;">Instagram</a>
+  </div>
+</div>
+
+  <div class="container reveal">
+    Saya percaya bahwa karya itu hidup kalau bisa menginspirasi orang lain. Karena itu saya menaruh cerita, perjalanan, dan ide saya di sini.
+  </div>
+
+  <div class="container reveal">
+    Terima kasih sudah meluangkan waktu mengunjungi situs saya. Silakan eksplor dan semoga kamu suka dengan apa yang saya sajikan di sini.
+  </div>
+</main>
+
+<script>
+  const menuBtn = document.getElementById('menuBtn');
+  const sidebar = document.getElementById('sidebar');
+
+  menuBtn.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+  });
+
+  function revealOnScroll() {
+    const reveals = document.querySelectorAll(".reveal");
+    const triggerPoint = window.innerHeight - 100;
+
+    reveals.forEach(el => {
+      const top = el.getBoundingClientRect().top;
+      if (top < triggerPoint) {
+        el.classList.add("active");
+      }
+    });
+  }
+
+  window.addEventListener('scroll', revealOnScroll);
+  window.addEventListener('load', revealOnScroll);
+</script>
+
+<script>
+  const serviceToggle = document.getElementById('serviceToggle');
+  const serviceMenu = document.getElementById('serviceMenu');
+  const arrow = document.getElementById('arrow');
+
+  serviceToggle.addEventListener('click', function (e) {
+    e.preventDefault();
+    serviceMenu.classList.toggle('active');
+    arrow.classList.toggle('rotate');
+  });
+</script>
+
+</body>
+  </html>
